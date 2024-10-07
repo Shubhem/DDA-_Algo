@@ -1,8 +1,7 @@
 #include <iostream>
-#include <cmath>      // For abs(), round(), and sqrt() functions
+#include <cmath>      // For abs() and round() functions
 #include <graphics.h> // For graphics functions
 #include <conio.h>    // For getch()
-#include <string>     // For color names
 
 using namespace std;
 
@@ -69,14 +68,15 @@ void drawAxes(int width, int height)
 
     // Label the axes
     setcolor(WHITE);
-    outtextxy(width - 10, height / 2 + 5, "X");
-    outtextxy(width / 2 + 5, 10, "Y");
+    outtextxy(width - 20, height / 2 + 10, "X");
+    outtextxy(width / 2 + 10, 10, "Y");
 }
 
-// Function to calculate and return the length of the line
-double calculateLineLength(int x0, int y0, int x1, int y1)
+// Function to convert user coordinates to screen coordinates
+void convertCoordinates(int& x, int& y, int width, int height)
 {
-    return sqrt(pow(x1 - x0, 2) + pow(y1 - y0, 2));
+    x = width / 2 + x;
+    y = height / 2 - y;
 }
 
 int main()
@@ -107,25 +107,18 @@ int main()
         // Get color input
         int color = getColorInput();
 
+        // Convert user coordinates to screen coordinates
+        convertCoordinates(x0, y0, width, height);
+        convertCoordinates(x1, y1, width, height);
+
         // Draw the line using DDA algorithm
         dda(x0, y0, x1, y1, color);
-
-        // Calculate and display the length of the line
-        double length = calculateLineLength(x0, y0, x1, y1);
-        cout << "Length of the line: " << length << endl;
 
         // Ask user if they want to draw another line
         cout << "Do you want to draw another line? (y/n): ";
         cin >> choice;
 
-        if (choice == 'c' || choice == 'C')
-        {
-            cleardevice();
-            drawAxes(width, height);
-            choice = 'y'; // Continue the loop
-        }
-
-    } while (choice == 'y' || choice == 'Y' || choice == 'c' || choice == 'C');
+    } while (choice == 'y' || choice == 'Y');
 
     // Wait for key press before closing the graphics window
     cout << "Press any key to exit..." << endl;
